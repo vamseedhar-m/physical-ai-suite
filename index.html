@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Physical AI Suite — Vamseedhar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #080c12;
+      --surface:     #0f1520;
+      --surface2:    #161d2e;
+      --surface3:    #1c2438;
+      --border:      #232d42;
+      --border2:     #1a2235;
+      --text:        #eef2f8;
+      --text2:       #b8c4d8;
+      --text3:       #6b7a99;
+      --blue:        #4d9fff;
+      --blue-dim:    rgba(77,159,255,0.12);
+      --indigo:      #818cf8;
+      --indigo-dim:  rgba(129,140,248,0.12);
+      --violet:      #a87fff;
+      --violet-dim:  rgba(168,127,255,0.12);
+      --radius:      10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(8,12,18,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--violet) 100%);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      color: var(--text2);
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+    .nav-link:hover { color: var(--text); background: var(--surface2); }
+
+    .nav-github {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      transition: all 0.15s;
+      margin-left: 4px;
+    }
+    .nav-github:hover { color: var(--text); border-color: var(--text3); background: var(--surface3); }
+
+    /* ── HERO ─────────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: 96px 32px 80px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 480px;
+      background: radial-gradient(ellipse at center,
+        rgba(77,159,255,0.10) 0%, rgba(168,127,255,0.06) 45%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(35,45,66,0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(35,45,66,0.35) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, black 30%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 6px var(--blue);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 58px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 20px;
+    }
+
+    .grad {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--violet) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text2);
+      max-width: 600px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── HERO BADGES (clickable) ─────────────────────────────────────── */
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 9px;
+      border: 1px solid;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+      text-decoration: none;
+      transition: all 0.18s;
+      cursor: pointer;
+    }
+
+    .badge-plan {
+      color: var(--blue);
+      border-color: rgba(77,159,255,0.3);
+      background: rgba(77,159,255,0.06);
+    }
+    .badge-plan:hover {
+      background: rgba(77,159,255,0.12);
+      border-color: var(--blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(77,159,255,0.15);
+    }
+
+    .badge-detect {
+      color: var(--indigo);
+      border-color: rgba(129,140,248,0.3);
+      background: rgba(129,140,248,0.06);
+    }
+    .badge-detect:hover {
+      background: rgba(129,140,248,0.12);
+      border-color: var(--indigo);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(129,140,248,0.15);
+    }
+
+    .badge-monitor {
+      color: var(--violet);
+      border-color: rgba(168,127,255,0.3);
+      background: rgba(168,127,255,0.06);
+    }
+    .badge-monitor:hover {
+      background: rgba(168,127,255,0.12);
+      border-color: var(--violet);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(168,127,255,0.15);
+    }
+
+    /* ── SECTION WRAPPER ─────────────────────────────────────────────── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 80px 32px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .section-sub {
+      font-size: 15px;
+      color: var(--text2);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* ── PRODUCT CARDS ───────────────────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+
+    .card-plan   { --accent: var(--blue);   }
+    .card-detect { --accent: var(--indigo); }
+    .card-monitor{ --accent: var(--violet); }
+
+    .product-card:hover { border-color: var(--accent); }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top:0; left:0; right:0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .product-card:hover::before { opacity: 1; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border2);
+    }
+
+    .card-title-group { flex: 1; }
+
+    .card-phase {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 3px;
+    }
+
+    .card-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex: 1;
+    }
+
+    .card-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--text2);
+      line-height: 1.45;
+    }
+
+    .feat-check { color: var(--accent); font-size: 12px; margin-top: 1px; flex-shrink: 0; }
+
+    /* ── HOW IT WORKS ────────────────────────────────────────────────── */
+    .hiw-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 48px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .hiw-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 28px;
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border2);
+      transition: background 0.15s;
+    }
+    .hiw-step:last-child { border-bottom: none; }
+    .hiw-step:hover { background: var(--surface2); }
+
+    .hiw-num {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--border);
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 2px;
+      min-width: 36px;
+    }
+
+    .hiw-body {}
+
+    .hiw-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+
+    .hiw-desc {
+      font-size: 13.5px;
+      color: var(--text2);
+      line-height: 1.6;
+      max-width: 640px;
+    }
+
+    /* ── ARCHITECTURE ────────────────────────────────────────────────── */
+    .arch-shared-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 48px;
+      padding: 14px 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 12.5px;
+      color: var(--text2);
+      flex-wrap: wrap;
+    }
+
+    .arch-shared-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text3);
+      white-space: nowrap;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .arch-cols-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .arch-cols-grid { grid-template-columns: 1fr; }
+    }
+
+    .arch-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .arch-col:hover { border-color: var(--col-accent); }
+
+    .arch-col-plan   { --col-accent: var(--blue);   }
+    .arch-col-detect { --col-accent: var(--indigo); }
+    .arch-col-monitor{ --col-accent: var(--violet); }
+
+    .arch-col-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 18px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .arch-col-icon { font-size: 18px; }
+
+    .arch-col-phase {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--col-accent);
+      margin-bottom: 1px;
+    }
+
+    .arch-col-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    .arch-layer {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border2);
+    }
+    .arch-layer:last-child { border-bottom: none; flex: 1; }
+
+    .arch-layer-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--col-accent);
+      margin-bottom: 4px;
+      opacity: 0.85;
+    }
+
+    .arch-layer-val {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.55;
+    }
+
+    /* ── STACK ───────────────────────────────────────────────────────── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 48px;
+    }
+
+    .stack-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.15s;
+    }
+    .stack-item:hover { background: var(--surface2); }
+
+    .stack-icon { font-size: 20px; flex-shrink: 0; }
+
+    .stack-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.1px;
+    }
+
+    .stack-role { font-size: 11px; color: var(--text3); }
+
+    /* ── FOOTER ──────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 32px;
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-left { font-size: 13px; color: var(--text3); }
+
+    .footer-gh {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text3);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-gh:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      nav { padding: 0 20px; }
+      .nav-link { display: none; }
+      .hero { padding: 72px 20px 60px; }
+      .section { padding: 60px 20px; }
+      .hiw-step { flex-direction: column; gap: 12px; padding: 20px; }
+      .hiw-num { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ────────────────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="nav-logo">
+      <!-- humanoid silhouette -->
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="3.2" r="2.2"/>
+        <rect x="5.5" y="6.4" width="5" height="5" rx="1.2"/>
+        <rect x="2.8" y="6.8" width="2" height="4" rx="1"/>
+        <rect x="11.2" y="6.8" width="2" height="4" rx="1"/>
+        <rect x="5.6" y="12.4" width="1.9" height="3.2" rx="0.95"/>
+        <rect x="8.5" y="12.4" width="1.9" height="3.2" rx="0.95"/>
+      </svg>
+    </div>
+    Physical AI Suite
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="#how-it-works">How it works</a>
+    <a class="nav-link" href="#architecture">Architecture</a>
+    <a class="nav-github" href="https://github.com/vamseedhar-m" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27
+          .68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+          .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+          0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    For automation engineers
+  </div>
+
+  <h1>AI for every phase of<br>the <span class="grad">physical stack</span></h1>
+
+  <p class="hero-sub">
+    Three tools that span the automation lifecycle —
+    plan tasks before hardware moves, catch defects at the line,
+    and monitor equipment before it fails.
+  </p>
+
+  <div class="hero-badges">
+    <a class="hero-badge badge-plan" href="http://localhost:8000" target="_blank">
+      ⬡ &nbsp;Robot Task Planner
+    </a>
+    <a class="hero-badge badge-detect" href="#tools">
+      👁 &nbsp;Visual Defect Inspector
+    </a>
+    <a class="hero-badge badge-monitor" href="#tools">
+      📡 &nbsp;Digital Twin Monitor
+    </a>
+  </div>
+</section>
+
+<!-- ── TOOLS ──────────────────────────────────────────────────────────── -->
+<section class="section" id="tools">
+  <div class="section-label">The suite</div>
+  <h2 class="section-title">Plan, detect, and monitor</h2>
+  <p class="section-sub">
+    Each tool targets a distinct phase an automation engineer operates in —
+    together they cover the full lifecycle.
+  </p>
+
+  <div class="cards-grid">
+
+    <div class="product-card card-plan">
+      <div class="card-header">
+        <div class="card-icon">⬡</div>
+        <div class="card-title-group">
+          <div class="card-phase">Phase 01 · Plan</div>
+          <div class="card-name">Robot Task Planner</div>
+        </div>
+      </div>
+      <p class="card-desc">
+        Describe a task in plain English. Get a dependency-ordered task graph with
+        preconditions, effects, failure modes, and physical constraint warnings —
+        before any code runs on hardware.
+      </p>
+      <ul class="card-features">
+        <li><span class="feat-check">✓</span> Natural language → structured task graph via Claude</li>
+        <li><span class="feat-check">✓</span> Constraint validation — payload, reach, clearance</li>
+        <li><span class="feat-check">✓</span> Failure mode mapping with recovery strategies per step</li>
+        <li><span class="feat-check">✓</span> Interactive D3 visualization with per-node detail</li>
+      </ul>
+    </div>
+
+    <div class="product-card card-detect">
+      <div class="card-header">
+        <div class="card-icon">👁</div>
+        <div class="card-title-group">
+          <div class="card-phase">Phase 02 · Detect</div>
+          <div class="card-name">Visual Defect Inspector</div>
+        </div>
+      </div>
+      <p class="card-desc">
+        Upload a photo of a manufactured part. Claude's vision API identifies defects,
+        classifies type and severity, and produces a structured inspection report
+        with a pass/fail verdict.
+      </p>
+      <ul class="card-features">
+        <li><span class="feat-check">✓</span> Multi-modal reasoning — image in, structured report out</li>
+        <li><span class="feat-check">✓</span> Defect taxonomy: scratch, crack, contamination, deformation</li>
+        <li><span class="feat-check">✓</span> Critical / major / minor severity scoring</li>
+        <li><span class="feat-check">✓</span> Tolerance-aware analysis with optional part spec context</li>
+      </ul>
+    </div>
+
+    <div class="product-card card-monitor">
+      <div class="card-header">
+        <div class="card-icon">📡</div>
+        <div class="card-title-group">
+          <div class="card-phase">Phase 03 · Monitor</div>
+          <div class="card-name">Digital Twin Monitor</div>
+        </div>
+      </div>
+      <p class="card-desc">
+        A live-simulated industrial asset streams sensor telemetry. Claude monitors the
+        feed in time windows, detects anomalies, predicts time-to-failure, and generates
+        maintenance work orders.
+      </p>
+      <ul class="card-features">
+        <li><span class="feat-check">✓</span> Real-time sensor stream — NASA CMAPSS turbofan dataset</li>
+        <li><span class="feat-check">✓</span> AI anomaly detection with root-cause classification</li>
+        <li><span class="feat-check">✓</span> Time-to-failure prediction over windowed telemetry</li>
+        <li><span class="feat-check">✓</span> Auto-generated maintenance work orders + fault injection</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── HOW IT WORKS ────────────────────────────────────────────────────── -->
+<section class="section" id="how-it-works">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">From physical context to actionable output</h2>
+  <p class="section-sub">
+    The same three-step pattern runs across all three tools.
+  </p>
+
+  <div class="hiw-steps">
+
+    <div class="hiw-step">
+      <div class="hiw-num">01</div>
+      <div class="hiw-body">
+        <div class="hiw-title">Submit your physical context</div>
+        <p class="hiw-desc">A task description in plain English, a photo of a manufactured part, or a rolling sensor stream from your equipment. No structured data entry — Claude handles interpretation of the raw input.</p>
+      </div>
+    </div>
+
+    <div class="hiw-step">
+      <div class="hiw-num">02</div>
+      <div class="hiw-body">
+        <div class="hiw-title">Claude reasons with physical awareness</div>
+        <p class="hiw-desc">Structured prompts inject domain knowledge — robot kinematics, defect taxonomy, sensor failure signatures — so Claude reasons about physical constraints, not just language. The model applies engineering judgment: which steps are sequentially blocked, whether a defect exceeds tolerance, when a sensor trend signals imminent failure.</p>
+      </div>
+    </div>
+
+    <div class="hiw-step">
+      <div class="hiw-num">03</div>
+      <div class="hiw-body">
+        <div class="hiw-title">Validated, structured output</div>
+        <p class="hiw-desc">The backend validates Claude's response against domain-specific rules before returning structured JSON. A task graph an operator can execute, an inspection report a QC team can file, or a work order a maintenance crew can act on — not a prose summary.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── ARCHITECTURE ────────────────────────────────────────────────────── -->
+<section class="section" id="architecture">
+  <div class="section-label">Architecture</div>
+  <h2 class="section-title">One pattern, three physical domains</h2>
+  <p class="section-sub">
+    Each tool encodes domain knowledge into Claude's context — not generic prompts.
+    The backend enforces structure; Claude handles the reasoning.
+  </p>
+
+  <div class="arch-shared-bar">
+    <span class="arch-shared-label">Shared layer</span>
+    FastAPI async routing · per-tool structured prompt construction · JSON schema enforcement · domain constraint validation
+  </div>
+
+  <div class="arch-cols-grid">
+
+    <!-- Robot Task Planner -->
+    <div class="arch-col arch-col-plan">
+      <div class="arch-col-head">
+        <span class="arch-col-icon">⬡</span>
+        <div>
+          <div class="arch-col-phase">Phase 01 · Plan</div>
+          <div class="arch-col-name">Robot Task Planner</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Claude mode</div>
+        <div class="arch-layer-val">Extended text reasoning + tool use</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Prompt context</div>
+        <div class="arch-layer-val">Scene objects and locations · robot capability profile (payload, reach, joint limits) · dependency grammar rules · physical law constraints</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Constraint logic</div>
+        <div class="arch-layer-val">Precondition satisfiability · effect consistency · dependency cycle detection · payload / reach / clearance bounds per step</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Output schema</div>
+        <div class="arch-layer-val">Task graph JSON → D3 force visualization with per-step preconditions, effects, and failure modes</div>
+      </div>
+    </div>
+
+    <!-- Visual Defect Inspector -->
+    <div class="arch-col arch-col-detect">
+      <div class="arch-col-head">
+        <span class="arch-col-icon">👁</span>
+        <div>
+          <div class="arch-col-phase">Phase 02 · Detect</div>
+          <div class="arch-col-name">Visual Defect Inspector</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Claude mode</div>
+        <div class="arch-layer-val">Vision API — base64 image encoding</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Prompt context</div>
+        <div class="arch-layer-val">Defect taxonomy (scratch, crack, pit, contamination, deformation) · severity definitions · optional part spec and surface finish tolerances</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Constraint logic</div>
+        <div class="arch-layer-val">Defect type validation against taxonomy · severity normalization · confidence threshold filtering · pass/fail rule evaluation per defect class</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Output schema</div>
+        <div class="arch-layer-val">Inspection report JSON — defect list, location, severity, confidence score, and final pass/fail verdict</div>
+      </div>
+    </div>
+
+    <!-- Digital Twin Monitor -->
+    <div class="arch-col arch-col-monitor">
+      <div class="arch-col-head">
+        <span class="arch-col-icon">📡</span>
+        <div>
+          <div class="arch-col-phase">Phase 03 · Monitor</div>
+          <div class="arch-col-name">Digital Twin Monitor</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Claude mode</div>
+        <div class="arch-layer-val">Extended context + server-sent streaming (SSE)</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Prompt context</div>
+        <div class="arch-layer-val">Rolling sensor window (N cycles) · statistical baseline · CMAPSS fault signature dictionary · maintenance action library</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Constraint logic</div>
+        <div class="arch-layer-val">Anomaly scoring vs. rolling baseline · time-to-failure regression bounds · work order template population from fault classification</div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Output schema</div>
+        <div class="arch-layer-val">Anomaly event JSON — sensor IDs, deviation score, root-cause class, TTF estimate → maintenance work order</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── STACK ───────────────────────────────────────────────────────────── -->
+<section class="section" id="stack">
+  <div class="section-label">Stack</div>
+  <h2 class="section-title">From text to vision to streaming</h2>
+  <p class="section-sub">
+    Each tool extends Claude's reasoning to a different input modality —
+    unified through the same backend pattern.
+  </p>
+
+  <div class="stack-grid">
+    <div class="stack-item">
+      <span class="stack-icon">🧠</span>
+      <div>
+        <div class="stack-name">Claude Sonnet 4</div>
+        <div class="stack-role">Reasoning · vision · streaming</div>
+      </div>
+    </div>
+    <div class="stack-item">
+      <span class="stack-icon">🌐</span>
+      <div>
+        <div class="stack-name">FastAPI</div>
+        <div class="stack-role">Async backend · constraint engine</div>
+      </div>
+    </div>
+    <div class="stack-item">
+      <span class="stack-icon">📊</span>
+      <div>
+        <div class="stack-name">D3.js</div>
+        <div class="stack-role">Interactive task graph visualization</div>
+      </div>
+    </div>
+    <div class="stack-item">
+      <span class="stack-icon">🛩️</span>
+      <div>
+        <div class="stack-name">NASA CMAPSS</div>
+        <div class="stack-role">Turbofan sensor dataset</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-left">Built by Vamsee</div>
+  <a class="footer-gh" href="https://github.com/vamseedhar-m" target="_blank">View source on GitHub →</a>
+</footer>
+
+</body>
+</html>
